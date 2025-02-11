@@ -1,0 +1,9 @@
+magic-pdf[full]
+huggingface_hub
+modelscope
+reportlab
+fastapi
+python-multipart
+uvicorn
+redis
+psycopg2-binary

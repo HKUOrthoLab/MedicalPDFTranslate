@@ -1,0 +1,26 @@
+# Python virtual environment
+MinerU/venv/
+MinerU/.venv/
+MinerU/env/
+MinerU/.env/
+medreport
+modelscope
+output
+input
+.cache
+.paddleocr
+tj_output
+redis_data
+postgres_data
+
+webdemo/node_modules
+webdemo/.next
+
+# Python cache files
+MinerU/__pycache__/
+MinerU/**/__pycache__/
+MinerU/**/*.py[cod]
+
+# IDE settings
+.idea/
+.vscode/

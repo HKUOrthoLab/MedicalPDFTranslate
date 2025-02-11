@@ -1,0 +1,91 @@
+
+services:
+  Translate-Backend:
+    build:
+      context: .  # 修改上下文为项目根目录
+      dockerfile: docker/CPU/Dockerfile
+    image: xyzimage/pdftranslate-backend:latest
+    container_name: PDFTranslate_backend
+    ports:
+      - "18180:8000"  # 添加端口映射，格式为 "主机端口:容器端口"
+    volumes:
+        - ./output:/app/output
+      #   - C:\\Users\\oixra\\.cache:/app/.cache/
+      # #- ./.cache:/app/.cache
+      #   - C:\\Users\\oixra\\.paddleocr:/root/.paddleocr
+        # - ./MinerUApi.py:/app/MinerUApi.py
+        # - ./rebuild_pdf.py:/app/rebuild_pdf.py
+        # - ./pdf_process.py:/app/pdf_process.py
+        # - ./translation_db.py:/app/translation_db.py
+    networks:
+      - pdftranslate-network
+    environment:
+      # 设置为非交互模式
+      - DEBIAN_FRONTEND=noninteractive
+    restart: unless-stopped  # 添加自动重启策略
+    depends_on:
+      - redis
+      - postgres
+
+  webdemo:
+    build:
+      context: .
+      dockerfile: webdemo/Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL: http://${HOST_IP}:18180  # 在构建时传入环境变量,需要在 .env 文件中配置 ip
+        - NEXT_APP_ONLINE_API_URL: your_online_api_url # 不需要用在线模型，就可以不填
+        - NEXT_APP_API_ONLINE_KEY: your_online_api_key # 不需要用在线模型，就可以不填
+    image: xyzimage/pdftranslate-webdemo:latest
+    container_name: PDFTranslate_frontend
+    ports:
+      - "3300:3000"
+    networks:
+      - pdftranslate-network
+    depends_on:
+      - Translate-Backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://${HOST_IP}:18180 
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    container_name: translation_redis
+    command: redis-server --appendonly yes
+    volumes:
+      - ./redis_data:/data
+    networks:
+      - pdftranslate-network
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: translation_postgres
+    environment:
+      POSTGRES_DB: translations
+      POSTGRES_USER: translator
+      POSTGRES_PASSWORD: translator123
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql  # 添加这行
+    networks:
+      - pdftranslate-network
+
+  OllamaApi-backend:
+    build:
+      context: ./OllamaAPI
+      dockerfile: Dockerfile
+    image: xyzimage/pdftranslate-ollamaapi:latest
+    container_name: OllamaApi-backend
+    networks:
+      - pdftranslate-network
+    ports:
+      - "8081:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - OLLAMA_API_URL=http://ollama:11434
+    restart: unless-stopped
+
+networks:
+  pdftranslate-network:
+    #external: true
+    name: pdftranslate-network
