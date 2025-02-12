@@ -1,36 +1,38 @@
 # MedicalPDFTranslate
-auto translate Chinese Medical Report PDF to English
-
-<div align="center" xmlns="http://www.w3.org/1999/html">
-<!-- logo -->
-
-
-<!-- icon -->
+Auto translate Chinese Medical Report PDF to English.
+支持中文体检报告 PDF 自动翻译为英文，并且保持原文的排版结构不变，可实现翻译后的英文报告跟原文对应的格式排版。
 
 
 
+## 更新记录
+- 2025/02/11 完成项目，支持 docker compose 一键部署
 
 
-</div>
-
-# 更新记录
-- 2025/02/11 完成项目，支持 docker compose 部署
-
-
-## 项目简介
+# 项目简介
 
 对中文体检报告 PDF 文件识别，并且调用翻译接口，翻译成英文，生成英文版本的体检报告 PDF 文件。
+1、对电子版体检报告 PDF 文件支持效果良好。对扫描版体检报告 PDF 文件支持效果不好。
+2、支持调用本地大语言模型进行翻译，可以本地通过 ollama 部署 deepseek 进行翻译。
+3、支持调用第三方翻译接口，如腾讯云在线的 deepseek模型，也可以通过修改 url 调用其它在线模型进行翻译。
 
 本项目基于开源项目
 - MinerU是一款将PDF转化为机器可读格式的工具（如markdown、json），可以很方便地抽取为任意格式。
 
 
-## 主要功能
+# 主要功能
 
 - 分析体检报告 PDF 的排版信息，识别体检报告的图片，然后调用翻译接口，翻译成英文，生成英文版本的体检报告 PDF 文件。
 
+# 预览效果
 
-## 快速开始
+![图片描述](assets/pdfoutput2.png)
+![图片描述](assets/pdfoutput1.png)
+![图片描述](assets/ui1.png)
+![图片描述](assets/ui2.png)
+![图片描述](assets/ui3.png)
+
+
+# 快速开始
 
 使用 docker 安装
 
@@ -64,12 +66,14 @@ docker composer up -d
 打开浏览器访问 浏览器访问 localhost:3300 
 
 
+# 更多配置
+以下内容参考 MinerU 项目
 
-#### 2. 下载模型权重文件
+#### 下载模型权重文件
 
 详细参考 [如何下载模型文件](docs/how_to_download_models_zh_cn.md)
 
-#### 3. 修改配置文件以进行额外配置
+#### 修改配置文件以进行额外配置
 
 修改用户目录下的magic-pdf.json文件，配置默认模型路径。
 您可在【用户目录】下找到magic-pdf.json文件。
@@ -108,8 +112,6 @@ unitable，模型大小 500M，推理耗时 cpu 6s, GPU(Nvidia 4090) 1.5s。
 
 2、struct_eqtable:必须使用 GPU
 3、TableMaster：可以 CPU 和 GPU
-
-#### 4. 运行项目
 
 
 ### 使用GPU
@@ -157,16 +159,14 @@ unitable，模型大小 500M，推理耗时 cpu 6s, GPU(Nvidia 4090) 1.5s。
 > 您可以通过将 `formula-config` 部分中的 `enable` 参数设置为 `false` 来禁用公式识别功能。
 
 
-## 使用
-
-
 
 
 # License Information
 
 [LICENSE.md](LICENSE.md)
 
-本项目目前采用PyMuPDF以实现高级功能，但因其遵循AGPL协议，可能对某些使用场景构成限制。未来版本迭代中，我们计划探索并替换为许可条款更为宽松的PDF处理库，以提升用户友好度及灵活性。
+本项目开源，但不提供任何形式的担保。由于本项目使用了 MinerU 项目的部分代码，本项目也遵循其开源协议：
+MinerU 目前采用PyMuPDF以实现高级功能，但因其遵循AGPL协议，可能对某些使用场景构成限制。未来版本迭代中，我们计划探索并替换为许可条款更为宽松的PDF处理库，以提升用户友好度及灵活性。
 
 # Acknowledgments
 
